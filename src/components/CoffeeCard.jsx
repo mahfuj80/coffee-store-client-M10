@@ -2,7 +2,7 @@ import { PropTypes } from 'prop-types';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-const CoffeeCard = ({ coffee }) => {
+const CoffeeCard = ({ coffee, setCoffees, coffees }) => {
   // eslint-disable-next-line react/prop-types
   const { _id, name, quantity, supplier, taste, photo } = coffee;
   const handleDelete = (_id) => {
@@ -25,6 +25,8 @@ const CoffeeCard = ({ coffee }) => {
             console.log(data);
             if (data.deletedCount > 0) {
               Swal.fire('Deleted!', 'Your Coffee has been deleted.', 'success');
+              const remaining = coffees.filter((cof) => cof._id !== _id);
+              setCoffees(remaining);
             }
           });
       }
@@ -64,6 +66,8 @@ const CoffeeCard = ({ coffee }) => {
 };
 CoffeeCard.propTypes = {
   coffee: PropTypes.object.isRequired,
+  setCoffees: PropTypes.func.isRequired,
+  coffees: PropTypes.array.isRequired,
 };
 
 export default CoffeeCard;
