@@ -1,13 +1,27 @@
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 const Users2 = () => {
-  const [users, setUsers] = useState([]);
+  //   const [users, setUsers] = useState([]);
 
-  useEffect(() => {
-    fetch('http://localhost:5000/user')
-      .then((res) => res.json())
-      .then((data) => setUsers(data));
-  }, []);
+  //   useEffect(() => {
+  //     fetch('http://localhost:5000/user')
+  //       .then((res) => res.json())
+  //       .then((data) => setUsers(data));
+  //   }, []);
+
+  const {
+    isPending,
+    isError,
+    error,
+    data: users,
+  } = useQuery({
+    queryKey: ['users'],
+    queryFn: async () => {
+      const res = await fetch('http://localhost:5000/user');
+      return res.json();
+    },
+  });
 
   const handleDelete = (id) => {
     // make sure user is confirmed to delete
@@ -25,6 +39,14 @@ const Users2 = () => {
         }
       });
   };
+
+  if (isPending) {
+    return <span className="loading loading-bars loading-lg"></span>;
+  }
+
+  if (isError) {
+    return <p>{error?.message}</p>;
+  }
   return (
     <div>
       {/* <h2>users: {loadedUsers.length}</h2> */}
@@ -41,7 +63,7 @@ const Users2 = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+            {users?.map((user) => (
               <tr key={user._id} className="hover">
                 <th>1</th>
                 <td>{user.email}</td>
